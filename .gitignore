@@ -1,0 +1,10 @@
+node_modules/
+secure/*
+!secure/README.md
+!secure/device-configs/README.md
+!secure/device-secrets/README.md
+private/*
+!private/README.md
+.env
+.server.err.log
+.server.out.log

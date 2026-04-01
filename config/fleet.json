@@ -1,0 +1,87 @@
+{
+  "classes": {
+    "worker": {
+      "label": "Workers",
+      "sketch": "worker",
+      "targetVersion": "0.1.1",
+      "notes": "Worker nodes for early OTA rollout."
+    },
+    "drone": {
+      "label": "Drones",
+      "sketch": "drone",
+      "targetVersion": "0.1.0",
+      "notes": "Support nodes for future deployment groups."
+    },
+    "queen": {
+      "label": "Queen",
+      "sketch": "queen",
+      "targetVersion": "0.1.0",
+      "notes": "Primary coordination node."
+    },
+    "hive": {
+      "label": "Hive",
+      "sketch": "hive",
+      "targetVersion": "0.1.0",
+      "notes": "Shared hive controller."
+    }
+  },
+  "versionPropertyNames": [
+    "firmwareVersion",
+    "firmware_version",
+    "appVersion",
+    "app_version",
+    "version"
+  ],
+  "devices": [
+    {
+      "name": "W1",
+      "deviceId": "d99de179-3406-4c06-ae0c-2059f73a1ae5",
+      "thingId": "3c079632-a42b-4921-b7ff-19f840856d0c",
+      "class": "worker",
+      "fqbn": "arduino:esp32:nano_nora",
+      "enabled": true,
+      "scope": "university",
+      "notes": "The first worker"
+    },
+    {
+      "name": "W2",
+      "deviceId": "8a09b518-2a68-425b-918d-d3e75f4d9405",
+      "thingId": "e5965911-5215-43c8-ba68-deaea1a6ac3a",
+      "class": "worker",
+      "fqbn": "arduino:esp32:nano_nora",
+      "enabled": true,
+      "scope": "university",
+      "notes": "Second worker in the pilot group."
+    },
+    {
+      "name": "Hermia",
+      "deviceId": "8a13dfee-7167-4056-ab7b-296d183fe16b",
+      "thingId": "c1e7dd39-842f-4ed6-a0d6-982871307df8",
+      "class": "worker",
+      "fqbn": "arduino:esp32:nano_nora",
+      "enabled": true,
+      "scope": "university",
+      "notes": ""
+    },
+    {
+      "name": "Robbi",
+      "deviceId": "fe21c303-a786-4b80-919e-c8293b8c43eb",
+      "thingId": "c8a04534-7ad7-40db-9a07-50650d57dd5f",
+      "class": "hive",
+      "fqbn": "arduino:esp32:nano_nora",
+      "enabled": true,
+      "scope": "university",
+      "notes": ""
+    },
+    {
+      "name": "Queen1",
+      "deviceId": "df6d81eb-4ba3-4644-8f70-45bf92876cf9",
+      "thingId": "42d8f250-b0ff-4e76-b56b-f83144b2bb45",
+      "class": "queen",
+      "fqbn": "arduino:esp32:nano_nora",
+      "enabled": true,
+      "scope": "university",
+      "notes": ""
+    }
+  ]
+}

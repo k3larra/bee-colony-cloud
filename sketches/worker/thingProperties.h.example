@@ -1,0 +1,37 @@
+// Copy this file to thingProperties.h and replace the placeholders
+// with the values generated for the specific Arduino Cloud Thing/device.
+
+#pragma once
+
+#include <ArduinoIoTCloud.h>
+#include <Arduino_ConnectionHandler.h>
+
+const char DEVICE_LOGIN_NAME[] = "REPLACE_WITH_DEVICE_LOGIN_NAME";
+
+const char SSID[] = SECRET_SSID;
+const char PASS[] = SECRET_OPTIONAL_PASS;
+const char DEVICE_KEY[] = SECRET_DEVICE_KEY;
+
+void onServoSpeedChange();
+
+String firmware_version;
+String worker_state;
+int energy_use;
+int harvest_offer;
+int ldr_value;
+int servo_speed;
+bool alive;
+
+void initProperties() {
+  ArduinoCloud.setBoardId(DEVICE_LOGIN_NAME);
+  ArduinoCloud.setSecretDeviceKey(DEVICE_KEY);
+  ArduinoCloud.addProperty(firmware_version, READ, ON_CHANGE, NULL);
+  ArduinoCloud.addProperty(worker_state, READ, ON_CHANGE, NULL);
+  ArduinoCloud.addProperty(energy_use, READ, ON_CHANGE, NULL);
+  ArduinoCloud.addProperty(harvest_offer, READ, ON_CHANGE, NULL);
+  ArduinoCloud.addProperty(ldr_value, READ, 10 * SECONDS, NULL);
+  ArduinoCloud.addProperty(servo_speed, READWRITE, ON_CHANGE, onServoSpeedChange);
+  ArduinoCloud.addProperty(alive, READ, ON_CHANGE, NULL);
+}
+
+WiFiConnectionHandler ArduinoIoTPreferredConnection(SSID, PASS);

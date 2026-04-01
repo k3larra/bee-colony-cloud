@@ -1,0 +1,9 @@
+{
+  "name": "arduinoespcloud1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal Node.js server for listing Arduino Cloud devices and online devices.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
