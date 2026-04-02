@@ -80,7 +80,8 @@ $localEnvPath = Join-Path $projectRoot "secure\\local.env"
 $privateRoot = Join-Path $projectRoot "private"
 $toolsRoot = Join-Path $privateRoot "tools"
 $cloudCliPreferred = Join-Path $toolsRoot "arduino-cloud-cli\\arduino-cloud-cli.exe"
-$arduinoCliPreferred = "C:\\Program Files\\Arduino CLI\\arduino-cli.exe"
+$arduinoCliPreferred = Join-Path $toolsRoot "arduino-cli\\arduino-cli.exe"
+$arduinoCliFallback = "C:\\Program Files\\Arduino CLI\\arduino-cli.exe"
 
 if (-not (Test-Path -LiteralPath $fleetConfigPath)) {
   throw "Missing fleet config: $fleetConfigPath"
@@ -93,7 +94,11 @@ if (-not (Test-Path -LiteralPath $localEnvPath)) {
 $fleet = Get-Content -LiteralPath $fleetConfigPath -Raw | ConvertFrom-Json
 $envConfig = Read-KeyValueFile -Path $localEnvPath
 
-$arduinoCliPath = Require-Tool -Label "arduino-cli.exe" -PreferredPath $arduinoCliPreferred
+if (Test-Path -LiteralPath $arduinoCliPreferred) {
+  $arduinoCliPath = (Resolve-Path -LiteralPath $arduinoCliPreferred).Path
+} else {
+  $arduinoCliPath = Require-Tool -Label "arduino-cli.exe" -PreferredPath $arduinoCliFallback
+}
 $cloudCliPath = Require-Tool -Label "arduino-cloud-cli.exe" -PreferredPath $cloudCliPreferred
 
 $classConfig = $fleet.classes.$Class
