@@ -15,7 +15,7 @@
   Colony communication is local LAN traffic to the hive node.
 */
 
-const char FIRMWARE_VERSION[] = "0.2.2";
+const char FIRMWARE_VERSION[] = "0.2.4";
 
 constexpr uint8_t GREEN_LED_PIN = 2;
 constexpr uint8_t RED_LED_PIN = 3;
@@ -30,6 +30,8 @@ constexpr int SENSOR_MIN = 0;
 constexpr int SENSOR_MAX = 4095;
 constexpr int HARVEST_MAX = 100;
 constexpr int ENERGY_MAX = 100;
+constexpr int HIVE_STORED_LIGHT_MAX = 1000;
+constexpr int HIVE_STORED_LIGHT_SEARCH_THRESHOLD = (HIVE_STORED_LIGHT_MAX * 60) / 100;
 constexpr int SERVO_MIN_ANGLE = 0;
 constexpr int SERVO_MAX_ANGLE = 180;
 constexpr int SERVO_MIN_SPEED = 0;
@@ -55,6 +57,7 @@ static bool stressBlinkOn = false;
 int servoDirection = 1;
 int appliedServoSpeed = 0;
 String hiveColonyState = "unknown";
+int hiveStoredLight = 0;
 Servo myServo;
 
 void ensureMdnsReady();
@@ -70,9 +73,9 @@ String urlEncode(const String& value);
 bool resolveHiveIp(unsigned long currentMillis, bool forceRefresh);
 bool sendHiveReport(const IPAddress& ipAddress, const String& query);
 void applyHiveSnapshot(const String& payload);
+bool shouldSearchFromHiveLight();
 
 void setup() {
-  Serial.begin(115200);
   delay(250);
 
   initProperties();
@@ -95,10 +98,6 @@ void setup() {
 
   WiFi.setHostname(MDNS_HOSTNAME);
   ArduinoCloud.begin(ArduinoIoTPreferredConnection);
-
-  setDebugMessageLevel(2);
-  ArduinoCloud.printDebugInfo();
-  Serial.println("Worker node ready.");
 }
 
 void loop() {
@@ -157,6 +156,9 @@ String determineWorkerState(int lightLevel, int harvest, int speed) {
   if (WiFi.status() != WL_CONNECTED) {
     return "offline";
   }
+  if (shouldSearchFromHiveLight()) {
+    return "searching";
+  }
   if (speed <= 0) {
     return "idle";
   }
@@ -191,7 +193,7 @@ void updateServo(unsigned long currentMillis, int speed) {
 void updateStatusLeds(unsigned long currentMillis, int speed) {
   const bool stressActive = hiveColonyState == "stressed" || hiveColonyState == "critical";
 
-  if (speed > 0) {
+  if (shouldSearchFromHiveLight() || speed > 0) {
     digitalWrite(GREEN_LED_PIN, HIGH);
   } else {
     digitalWrite(GREEN_LED_PIN, LOW);
@@ -224,7 +226,6 @@ void reportToHive(unsigned long currentMillis) {
 
   if (!resolveHiveIp(currentMillis, false)) {
     lastReportTime = currentMillis;
-    Serial.println("Hive resolution failed.");
     return;
   }
 
@@ -276,9 +277,6 @@ bool sendHiveReport(const IPAddress& ipAddress, const String& query) {
     applyHiveSnapshot(http.getString());
   }
   http.end();
-
-  Serial.print("Hive report status: ");
-  Serial.println(status);
   return status > 0 && status < 400;
 }
 
@@ -297,6 +295,8 @@ void applyHiveSnapshot(const String& payload) {
       const String value = line.substring(separator + 1);
       if (key == "colony_state") {
         hiveColonyState = value;
+      } else if (key == "stored_light") {
+        hiveStoredLight = value.toInt();
       }
     }
 
@@ -329,8 +329,10 @@ String urlEncode(const String& value) {
   return encoded;
 }
 
+bool shouldSearchFromHiveLight() {
+  return hiveStoredLight > HIVE_STORED_LIGHT_SEARCH_THRESHOLD;
+}
+
 void onServoSpeedChange() {
   servo_speed = clampServoSpeed(servo_speed);
-  Serial.print("Servo speed changed to ");
-  Serial.println(servo_speed);
 }
