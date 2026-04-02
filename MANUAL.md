@@ -10,7 +10,7 @@ This project contains a local Node.js server that reads device data from Arduino
 - `scripts/onboard-and-deploy-device.ps1`: One-command flow for onboarding and deploying a new device.
 - `scripts/deploy-class.ps1`: Compile and OTA-deploy a class sketch to managed devices.
 - `.env.example`: Example environment configuration.
-- `secure/university-space.pdf`: Local-only reference document for the Malmö University space.
+- `secure/cloudspace.pdf`: Local-only reference document for the Malmo cloudspace.
 
 ## Requirements
 
@@ -26,9 +26,9 @@ Create a `secure/local.env` file and set these values:
 ```env
 ARDUINO_CLIENT_ID=your_client_id_here
 ARDUINO_CLIENT_SECRET=your_client_secret_here
-ARDUINO_UNI_CLIENT_ID=your_university_client_id_here
-ARDUINO_UNI_CLIENT_SECRET=your_university_client_secret_here
-ARDUINO_UNI_ORG_ID=your_university_org_id_here
+ARDUINO_UNI_CLIENT_ID=your_cloudspace_client_id_here
+ARDUINO_UNI_CLIENT_SECRET=your_cloudspace_client_secret_here
+ARDUINO_UNI_ORG_ID=your_cloudspace_org_id_here
 DEFAULT_WIFI_SSID=your_wifi_ssid_here
 DEFAULT_WIFI_PASS=your_wifi_password_here
 PORT=3000
@@ -38,9 +38,9 @@ PORT=3000
 
 - `ARDUINO_CLIENT_ID`: Personal Arduino Cloud client ID.
 - `ARDUINO_CLIENT_SECRET`: Personal Arduino Cloud client secret.
-- `ARDUINO_UNI_CLIENT_ID`: University/shared-space client ID.
-- `ARDUINO_UNI_CLIENT_SECRET`: University/shared-space client secret.
-- `ARDUINO_UNI_ORG_ID`: Arduino organization ID for the university space.
+- `ARDUINO_UNI_CLIENT_ID`: Cloudspace/shared-space client ID.
+- `ARDUINO_UNI_CLIENT_SECRET`: Cloudspace/shared-space client secret.
+- `ARDUINO_UNI_ORG_ID`: Arduino organization ID for the cloudspace.
 - `DEFAULT_WIFI_SSID`: Optional default Wi-Fi SSID used when scaffolding a device config.
 - `DEFAULT_WIFI_PASS`: Optional default Wi-Fi password used when scaffolding a device config.
 - `PORT`: Local HTTP port for the server.
@@ -78,7 +78,7 @@ http://localhost:3000
 
 If you changed `PORT`, use that port instead.
 
-The root URL redirects to `/university`.
+The root URL redirects to `/cloudspace`.
 
 The administration view is available at `http://localhost:3000/admin`.
 Device notes in the admin table can be edited inline and are saved to `config/fleet.json`.
@@ -117,12 +117,12 @@ Additional personal routes:
 - `/personal/online`: Only online personal devices.
 - `/personal/names`: Compact list with `id`, `name`, and `status`.
 
-### University Scope
+### Cloudspace Scope
 
-- `/university/devices`: Full university/shared-space device data.
-- `/university/online`: Only online university devices.
-- `/university/names`: Compact list with `id`, `name`, and `status`.
-- `/university`: Browser page for viewing and filtering university devices.
+- `/cloudspace/devices`: Full cloudspace/shared-space device data.
+- `/cloudspace/online`: Only online cloudspace devices.
+- `/cloudspace/names`: Compact list with `id`, `name`, and `status`.
+- `/cloudspace`: Browser page for viewing and filtering cloudspace devices.
 
 ### Fleet Administration
 
@@ -152,6 +152,8 @@ For each managed device, the script expects these local-only files:
 The script compiles one device-specific firmware per target device from the shared class sketch and then schedules OTA upload through Arduino Cloud.
 The `/admin` page includes a button for deploying the worker class through the same script.
 For version tracking, the admin page prefers the `FIRMWARE_VERSION` value from the shared sketch file and only falls back to `config/fleet.json` if no sketch version is found.
+Before deployment, the script compares the local sketch version with the version reported by each target device and blocks the rollout if a device is already on a newer version.
+The script also blocks deployment unless the current git branch is `main` and the tracked project files are clean. Use `-AllowUnsafeGit` only when you deliberately want to bypass that check.
 
 ## Cloud Variables
 
@@ -267,12 +269,12 @@ powershell -ExecutionPolicy Bypass -File .\scripts\add-managed-device.ps1 -Class
 powershell -ExecutionPolicy Bypass -File .\scripts\deploy-class.ps1 -Class worker -DeviceNames <device-name>
 ```
 
-## University Web Page
+## Cloudspace Web Page
 
 Open this in a browser:
 
 ```text
-http://localhost:3000/university
+http://localhost:3000/cloudspace
 ```
 
 The page includes:
@@ -286,7 +288,7 @@ The page includes:
 This page loads its data from:
 
 ```text
-/university/names
+/cloudspace/names
 ```
 
 ## Device Fields Returned by the Server
@@ -316,7 +318,7 @@ That drift is expected with the current workflow. The recommended practice is to
 
 1. Open a terminal in the project folder.
 2. Run `npm start`.
-3. Open `http://localhost:3000/university` if you want the browser view.
+3. Open `http://localhost:3000/cloudspace` if you want the browser view.
 4. Open `http://localhost:3000/admin` if you want the managed fleet view.
 5. Run `scripts/deploy-class.ps1` when you want to OTA-deploy a class sketch.
 
@@ -341,13 +343,13 @@ If startup fails with `EADDRINUSE`, another process is already using the configu
 Check:
 
 - Client ID and secret values
-- Organization ID for university requests
+- Organization ID for cloudspace requests
 - Internet connectivity
 - Whether the Arduino Cloud credentials are still valid
 
-### `/university` shows an error
+### `/cloudspace` shows an error
 
-The HTML page depends on `/university/names`. If the API request fails, the page will show the error returned by the server.
+The HTML page depends on `/cloudspace/names`. If the API request fails, the page will show the error returned by the server.
 
 ## Security Notes
 

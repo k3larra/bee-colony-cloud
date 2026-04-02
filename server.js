@@ -12,12 +12,12 @@ const DEVICES_URL = "https://api2.arduino.cc/iot/v2/devices";
 const THINGS_URL = "https://api2.arduino.cc/iot/v2/things";
 const FLEET_CONFIG_PATH = path.join(__dirname, "config", "fleet.json");
 const DEPLOY_SCRIPT_PATH = path.join(__dirname, "scripts", "deploy-class.ps1");
-const UNIVERSITY_PAGE_HTML = `<!doctype html>
+const CLOUDSPACE_PAGE_HTML = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>University Devices</title>
+  <title>Cloudspace Devices</title>
   <style>
     :root {
       --bg: #f4efe7;
@@ -292,7 +292,7 @@ const UNIVERSITY_PAGE_HTML = `<!doctype html>
 <body>
   <main>
     <section class="hero">
-      <h1>Malmö University Devices</h1>
+      <h1>Cloudspace Devices</h1>
       <p class="subhead">A compact cleanup view for the shared Arduino Cloud space. Filter by name, switch between all devices and online only, and use the IDs when removing or auditing entries.</p>
       <div class="stats">
         <div class="stat"><strong id="totalCount">-</strong><span>Total visible devices</span></div>
@@ -395,7 +395,7 @@ const UNIVERSITY_PAGE_HTML = `<!doctype html>
 
     async function load() {
       try {
-        const response = await fetch("/university/names");
+        const response = await fetch("/cloudspace/names");
         if (!response.ok) {
           throw new Error("Failed to load devices");
         }
@@ -1260,10 +1260,10 @@ function getConfig(kind) {
     };
   }
 
-  if (kind === "university") {
+  if (kind === "cloudspace" || kind === "university") {
     return {
       kind,
-      label: "university",
+      label: "cloudspace",
       clientId: process.env.ARDUINO_UNI_CLIENT_ID,
       clientSecret: process.env.ARDUINO_UNI_CLIENT_SECRET,
       organizationId: process.env.ARDUINO_UNI_ORG_ID,
@@ -1403,21 +1403,21 @@ async function fetchManagedFleet() {
       readSketchTargetVersion(classConfig.sketch) || classConfig.targetVersion || null,
     ])
   );
-  const [personalDevices, universityDevices, personalThings, universityThings] = await Promise.all([
+  const [personalDevices, cloudspaceDevices, personalThings, cloudspaceThings] = await Promise.all([
     fetchDevicesFor("personal").catch(() => ({ allDevices: [] })),
-    fetchDevicesFor("university").catch(() => ({ allDevices: [] })),
+    fetchDevicesFor("cloudspace").catch(() => ({ allDevices: [] })),
     fetchThingsFor("personal").catch(() => []),
-    fetchThingsFor("university").catch(() => []),
+    fetchThingsFor("cloudspace").catch(() => []),
   ]);
 
   const devicesById = new Map();
   const thingsById = new Map();
 
-  for (const device of [...personalDevices.allDevices, ...universityDevices.allDevices]) {
+  for (const device of [...personalDevices.allDevices, ...cloudspaceDevices.allDevices]) {
     devicesById.set(device.id, device);
   }
 
-  for (const thing of [...personalThings, ...universityThings]) {
+  for (const thing of [...personalThings, ...cloudspaceThings]) {
     thingsById.set(thing.id, thing);
   }
 
@@ -1436,7 +1436,7 @@ async function fetchManagedFleet() {
       class: entry.class,
       classLabel: classConfig.label || entry.class,
       enabled: entry.enabled !== false,
-      scope: entry.scope || "university",
+      scope: entry.scope || "cloudspace",
       sketch: classConfig.sketch || "",
       desiredVersion,
       reportedVersion,
@@ -1542,7 +1542,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.url === "/") {
-      redirect(res, "/university");
+      redirect(res, "/cloudspace");
       return;
     }
 
@@ -1561,23 +1561,28 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    if (req.url === "/university/devices") {
-      sendJson(res, 200, await fetchDevicesFor("university"));
+    if (req.url === "/cloudspace/devices" || req.url === "/university/devices") {
+      sendJson(res, 200, await fetchDevicesFor("cloudspace"));
       return;
     }
 
-    if (req.url === "/university/online") {
-      sendJson(res, 200, await fetchOnlineFor("university"));
+    if (req.url === "/cloudspace/online" || req.url === "/university/online") {
+      sendJson(res, 200, await fetchOnlineFor("cloudspace"));
       return;
     }
 
-    if (req.url === "/university/names") {
-      sendJson(res, 200, await fetchNamesFor("university"));
+    if (req.url === "/cloudspace/names" || req.url === "/university/names") {
+      sendJson(res, 200, await fetchNamesFor("cloudspace"));
       return;
     }
 
     if (req.url === "/university") {
-      sendHtml(res, UNIVERSITY_PAGE_HTML);
+      redirect(res, "/cloudspace");
+      return;
+    }
+
+    if (req.url === "/cloudspace") {
+      sendHtml(res, CLOUDSPACE_PAGE_HTML);
       return;
     }
 
@@ -1612,3 +1617,4 @@ if (require.main === module) {
     console.log(`Arduino device server listening on http://localhost:${PORT}`);
   });
 }
+

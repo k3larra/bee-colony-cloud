@@ -9,8 +9,8 @@ Example:
 ```env
 ARDUINO_CLIENT_ID=your_client_id_here
 ARDUINO_CLIENT_SECRET=your_client_secret_here
-ARDUINO_UNI_CLIENT_ID=your_university_client_id_here
-ARDUINO_UNI_CLIENT_SECRET=your_university_client_secret_here
-ARDUINO_UNI_ORG_ID=your_university_org_id_here
+ARDUINO_UNI_CLIENT_ID=your_cloudspace_client_id_here
+ARDUINO_UNI_CLIENT_SECRET=your_cloudspace_client_secret_here
+ARDUINO_UNI_ORG_ID=your_cloudspace_org_id_here
 PORT=3000
 ```

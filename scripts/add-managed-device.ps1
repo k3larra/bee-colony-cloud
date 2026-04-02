@@ -11,7 +11,7 @@ param(
 
   [string]$Fqbn,
 
-  [string]$Scope = "university",
+  [string]$Scope = "cloudspace",
 
   [string]$ExportZip,
 
@@ -158,7 +158,7 @@ function Get-ThingForDevice {
     [hashtable]$EnvConfig
   )
 
-  if ($ScopeName -eq "university") {
+  if ($ScopeName -eq "cloudspace" -or $ScopeName -eq "university") {
     $clientId = $EnvConfig["ARDUINO_UNI_CLIENT_ID"]
     $clientSecret = $EnvConfig["ARDUINO_UNI_CLIENT_SECRET"]
     $organizationId = $EnvConfig["ARDUINO_UNI_ORG_ID"]

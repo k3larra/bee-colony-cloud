@@ -40,7 +40,7 @@
       "class": "worker",
       "fqbn": "arduino:esp32:nano_nora",
       "enabled": true,
-      "scope": "university",
+      "scope": "cloudspace",
       "notes": "The first worker"
     },
     {
@@ -50,7 +50,7 @@
       "class": "worker",
       "fqbn": "arduino:esp32:nano_nora",
       "enabled": true,
-      "scope": "university",
+      "scope": "cloudspace",
       "notes": "Second worker in the pilot group."
     },
     {
@@ -60,7 +60,7 @@
       "class": "worker",
       "fqbn": "arduino:esp32:nano_nora",
       "enabled": true,
-      "scope": "university",
+      "scope": "cloudspace",
       "notes": ""
     },
     {
@@ -70,7 +70,7 @@
       "class": "hive",
       "fqbn": "arduino:esp32:nano_nora",
       "enabled": true,
-      "scope": "university",
+      "scope": "cloudspace",
       "notes": ""
     },
     {
@@ -80,7 +80,7 @@
       "class": "queen",
       "fqbn": "arduino:esp32:nano_nora",
       "enabled": true,
-      "scope": "university",
+      "scope": "cloudspace",
       "notes": ""
     }
   ]

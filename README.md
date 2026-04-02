@@ -1,12 +1,12 @@
 # Arduino Cloud Device Viewer
 
-A small Node.js server for viewing Arduino Cloud devices from personal and university scopes.
+A small Node.js server for viewing Arduino Cloud devices from personal and cloudspace scopes.
 
 ## What It Does
 
 - Fetches device data from the Arduino Cloud API
-- Exposes JSON endpoints for personal and university device lists
-- Serves a browser view for the university device list at `/university`
+- Exposes JSON endpoints for personal and cloudspace device lists
+- Serves a browser view for the cloudspace device list at `/cloudspace`
 
 ## Requirements
 
@@ -21,9 +21,9 @@ Create `secure/local.env` with your local credentials:
 ```env
 ARDUINO_CLIENT_ID=your_client_id_here
 ARDUINO_CLIENT_SECRET=your_client_secret_here
-ARDUINO_UNI_CLIENT_ID=your_university_client_id_here
-ARDUINO_UNI_CLIENT_SECRET=your_university_client_secret_here
-ARDUINO_UNI_ORG_ID=your_university_org_id_here
+ARDUINO_UNI_CLIENT_ID=your_cloudspace_client_id_here
+ARDUINO_UNI_CLIENT_SECRET=your_cloudspace_client_secret_here
+ARDUINO_UNI_ORG_ID=your_cloudspace_org_id_here
 DEFAULT_WIFI_SSID=your_wifi_ssid_here
 DEFAULT_WIFI_PASS=your_wifi_password_here
 PORT=3000
@@ -52,7 +52,7 @@ Then open:
 http://localhost:3000
 ```
 
-The root URL redirects to `/university`.
+The root URL redirects to `/cloudspace`.
 
 Fleet administration is available at `http://localhost:3000/admin`.
 Device notes in the admin table are editable and are saved back to `config/fleet.json`.
@@ -80,6 +80,8 @@ Requirements for each managed device:
 
 The same worker deployment can also be triggered from the `/admin` page.
 The admin page reads each class target version from the shared sketch file when it finds `FIRMWARE_VERSION`, so changing `sketches/worker/worker.ino` is normally enough.
+The deployment script also refuses to deploy when a target device already reports a higher firmware version than the local sketch, which helps prevent accidental rollbacks from an outdated computer.
+The deployment script also refuses to deploy unless the local git branch is `main` and the tracked project files are clean. Use `-AllowUnsafeGit` only when you intentionally want to bypass that guard.
 
 ## Add A New Device
 
@@ -122,9 +124,9 @@ The scaffold script:
 - `/health`
 - `/devices`
 - `/personal/devices`
-- `/university/devices`
-- `/university/names`
-- `/university`
+- `/cloudspace/devices`
+- `/cloudspace/names`
+- `/cloudspace`
 - `/admin`
 - `/admin/fleet`
 - `/admin/deploy`

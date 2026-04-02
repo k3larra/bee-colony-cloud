@@ -7,7 +7,7 @@ param(
 
   [string]$Name,
 
-  [string]$Scope = "university",
+  [string]$Scope = "cloudspace",
 
   [Parameter(Mandatory = $true)]
   [string]$ExportZip,
