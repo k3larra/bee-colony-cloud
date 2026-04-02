@@ -159,8 +159,8 @@ The script also blocks deployment unless the current git branch is `main` and th
 
 Version `0.9` currently uses five active devices:
 
-- `W1`, `W2`, and `Hermia` as workers
-- `Robbi` as the hive
+- `W1`, `W2`, and `W3` as workers
+- `Hive1` as the hive
 - `Queen1` as the queen
 
 Arduino Cloud is currently responsible for:

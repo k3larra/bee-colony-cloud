@@ -54,7 +54,7 @@
       "notes": "Second worker in the pilot group."
     },
     {
-      "name": "Hermia",
+      "name": "W3",
       "deviceId": "8a13dfee-7167-4056-ab7b-296d183fe16b",
       "thingId": "c1e7dd39-842f-4ed6-a0d6-982871307df8",
       "class": "worker",
@@ -64,7 +64,7 @@
       "notes": ""
     },
     {
-      "name": "Robbi",
+      "name": "Hive1",
       "deviceId": "fe21c303-a786-4b80-919e-c8293b8c43eb",
       "thingId": "c8a04534-7ad7-40db-9a07-50650d57dd5f",
       "class": "hive",
